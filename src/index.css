@@ -1,0 +1,268 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   TaskFlow — Design Tokens
+   ========================================================================== */
+
+:root {
+    /* Typography */
+    --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+    /* Font Sizes */
+    --fs-xs: 0.72rem;
+    --fs-sm: 0.82rem;
+    --fs-base: 0.95rem;
+    --fs-md: 1.05rem;
+    --fs-lg: 1.35rem;
+    --fs-xl: 1.9rem;
+    --fs-2xl: 2.6rem;
+
+    /* Spacing */
+    --sp-1: 0.25rem;
+    --sp-2: 0.5rem;
+    --sp-3: 0.75rem;
+    --sp-4: 1rem;
+    --sp-5: 1.5rem;
+    --sp-6: 2rem;
+    --sp-7: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
+    --radius-pill: 999px;
+
+    /* Motion */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --dur-fast: 140ms;
+    --dur-med: 260ms;
+    --dur-slow: 420ms;
+
+    /* Priority Colors */
+    --priority-high: #ef6f6f;
+    --priority-high-soft: rgba(239, 111, 111, 0.16);
+
+    --priority-medium: #f2b84b;
+    --priority-medium-soft: rgba(242, 184, 75, 0.16);
+
+    --priority-low: #6ed9a8;
+    --priority-low-soft: rgba(110, 217, 168, 0.16);
+
+    /* Category Colors */
+    --cat-personal: #8b95f6;
+    --cat-work: #4fb8e0;
+    --cat-study: #c58ff2;
+    --cat-shopping: #f2926b;
+    --cat-health: #6ed9a8;
+    --cat-custom: #d1a5e8;
+
+    /* Z-index */
+    --z-toast: 100;
+    --z-modal: 90;
+    --z-header: 20;
+}
+
+
+/* ==========================================================================
+   Dark Theme
+   ========================================================================== */
+
+:root,
+[data-theme="dark"] {
+    --bg-base: #0d1117;
+    --bg-gradient-a: #1a1440;
+    --bg-gradient-b: #0d1117;
+    --bg-gradient-c: #1c2436;
+
+    --glass-bg: rgba(255, 255, 255, 0.055);
+    --glass-bg-strong: rgba(255, 255, 255, 0.09);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+
+    --icon-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    --icon-shadow-hover: 0 0 5px 1px rgba(255, 255, 255, 0.6);
+
+    --text-primary: #f5f3ef;
+    --text-secondary: #a8adbb;
+    --text-muted: #6b7180;
+    --text-on-accent: #10131a;
+
+    --accent-primary: #8b95f6;
+    --accent-primary-strong: #a5adf9;
+    --accent-amber: #f2b84b;
+    --accent-mint: #6ed9a8;
+    --accent-rose: #f2748c;
+
+    --input-bg: rgba(255, 255, 255, 0.06);
+    --input-border: rgba(255, 255, 255, 0.14);
+    --input-border-focus: var(--accent-primary);
+
+    --scrollbar-track: rgba(255, 255, 255, 0.04);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.18);
+
+    --overdue-color: #f2748c;
+    --divider: rgba(255, 255, 255, 0.09);
+}
+
+
+/* ==========================================================================
+   Light Theme
+   ========================================================================== */
+
+[data-theme="light"] {
+    --bg-base: #f7f5f1;
+    --bg-gradient-a: #eae4ff;
+    --bg-gradient-b: #f7f5f1;
+    --bg-gradient-c: #ffe9d9;
+
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-bg-strong: rgba(255, 255, 255, 0.78);
+    --glass-border: rgba(17, 24, 39, 0.08);
+    --glass-shadow: 0 8px 32px rgba(31, 25, 60, 0.1);
+
+    --icon-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    --icon-shadow-hover: 0 0 5px 1px rgba(0, 0, 0, 0.6);
+
+    --text-primary: #1b1f27;
+    --text-secondary: #5b6270;
+    --text-muted: #8a90a0;
+    --text-on-accent: #fff;
+
+    --accent-primary: #6a74e0;
+    --accent-primary-strong: #565fcc;
+    --accent-amber: #cf8f24;
+    --accent-mint: #2f9d6f;
+    --accent-rose: #d84f6c;
+
+    --input-bg: rgba(17, 24, 39, 0.03);
+    --input-border: rgba(17, 24, 39, 0.12);
+    --input-border-focus: var(--accent-primary);
+
+    --scrollbar-track: rgba(17, 24, 39, 0.04);
+    --scrollbar-thumb: rgba(17, 24, 39, 0.18);
+
+    --overdue-color: #d84f6c;
+    --divider: rgba(17, 24, 39, 0.08);
+}
+
+
+/* ==========================================================================
+   Tailwind Theme Mapping
+   ========================================================================== */
+
+@theme {
+    /* Fonts */
+    --font-display: var(--font-display);
+    --font-body: var(--font-body);
+    --font-mono: var(--font-mono);
+
+    /* Font Sizes */
+    --text-xs: var(--fs-xs);
+    --text-sm: var(--fs-sm);
+    --text-base: var(--fs-base);
+    --text-md: var(--fs-md);
+    --text-lg: var(--fs-lg);
+    --text-xl: var(--fs-xl);
+    --text-2xl: var(--fs-2xl);
+
+    /* Spacing */
+    --spacing-1: var(--sp-1);
+    --spacing-2: var(--sp-2);
+    --spacing-3: var(--sp-3);
+    --spacing-4: var(--sp-4);
+    --spacing-5: var(--sp-5);
+    --spacing-6: var(--sp-6);
+    --spacing-7: var(--sp-7);
+
+    /* Radius */
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+    --radius-pill: var(--radius-pill);
+
+    /* Colors */
+    --color-bg-base: var(--bg-base);
+
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-muted: var(--text-muted);
+
+    --color-accent-primary: var(--accent-primary);
+    --color-accent-primary-strong: var(--accent-primary-strong);
+    --color-accent-amber: var(--accent-amber);
+    --color-accent-mint: var(--accent-mint);
+    --color-accent-rose: var(--accent-rose);
+
+    --color-priority-high: var(--priority-high);
+    --color-priority-medium: var(--priority-medium);
+    --color-priority-low: var(--priority-low);
+
+    --color-cat-personal: var(--cat-personal);
+    --color-cat-work: var(--cat-work);
+    --color-cat-study: var(--cat-study);
+    --color-cat-shopping: var(--cat-shopping);
+    --color-cat-health: var(--cat-health);
+    --color-cat-custom: var(--cat-custom);
+}
+
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+@layer base {
+    html {
+        font-family: var(--font-body);
+        background: var(--bg-base);
+        color: var(--text-primary);
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: var(--font-body);
+        font-size: var(--fs-base);
+        color: var(--text-primary);
+        background: var(--bg-base);
+        -webkit-font-smoothing: antialiased;
+        transition: background var(--dur-slow) var(--ease-out), color var(--dur-slow) var(--ease-out);
+    }
+
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+        font: inherit;
+    }
+
+    button {
+        cursor: pointer;
+    }
+}
+
+
+/* -------------------------------------------------------------------- */
+/* Ambient background                                                   */
+/* -------------------------------------------------------------------- */
+.bg-glow {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 12% -10%, var(--bg-gradient-a) 0%, transparent 45%),
+        radial-gradient(circle at 88% 8%, var(--bg-gradient-c) 0%, transparent 40%),
+        var(--bg-gradient-b);
+    opacity: 0.9;
+    transition: background var(--dur-slow) var(--ease-out);
+}
