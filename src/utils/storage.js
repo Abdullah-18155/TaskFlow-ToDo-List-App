@@ -69,12 +69,27 @@ function set(key, value) {
     }
 }
 
+export function getTasks() {
+    return get(KEYS.TASKS, []);
+}
+
+export function setTasks(tasks) {
+    return set(KEYS.TASKS, tasks);
+}
+
+export function getTheme() {
+    return get(KEYS.THEME, "dark");
+}
+
+export function setTheme(theme) {
+    return set(KEYS.THEME, theme);
+}
+
 export default function storage() {
     return {
-        getTasks: () => get(KEYS.TASKS, []),
-        setTasks: (tasks) => set(KEYS.TASKS, tasks),
-
-        getTheme: () => get(KEYS.THEME, "dark"),
-        setTheme: (theme) => set(KEYS.THEME, theme)
+        getTasks,
+        setTasks,
+        getTheme,
+        setTheme
     };
 }

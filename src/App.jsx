@@ -1,14 +1,19 @@
+import Footer from './components/layout/Footer'
+import Header from './components/layout/Header'
+
 function App() {
 
   return (
     <>
-      <main className="relative z-0">
+      <div className="bg-glow" aria-hidden={true}></div>
 
-        <div className="bg-glow" aria-hidden={true}></div>
+      <Header />
 
-        <h1>Hello World</h1>
+      <div className="flex-1">
+        Hello World
+      </div>
 
-      </main>
+      <Footer />
     </>
   )
 }

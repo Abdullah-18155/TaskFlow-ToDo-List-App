@@ -138,8 +138,8 @@
     --accent-mint: #2f9d6f;
     --accent-rose: #d84f6c;
 
-    --input-bg: rgba(17, 24, 39, 0.03);
-    --input-border: rgba(17, 24, 39, 0.12);
+    --input-bg: rgba(17, 24, 39, 0.05);
+    --input-border: rgba(17, 24, 39, 0.22);
     --input-border-focus: var(--accent-primary);
 
     --scrollbar-track: rgba(17, 24, 39, 0.04);
@@ -223,6 +223,7 @@
 
     body {
         min-height: 100vh;
+        min-width: 320px;
         font-family: var(--font-body);
         font-size: var(--fs-base);
         color: var(--text-primary);
@@ -265,4 +266,18 @@
         var(--bg-gradient-b);
     opacity: 0.9;
     transition: background var(--dur-slow) var(--ease-out);
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: var(--fs-xs);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}
+
+.link-btn:hover {
+    color: var(--accent-primary);
 }
