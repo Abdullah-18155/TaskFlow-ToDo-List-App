@@ -1,5 +1,7 @@
 import Footer from './components/layout/Footer'
 import Header from './components/layout/Header'
+import MobileToolBar from './components/layout/MobileToolbar'
+import Sidebar from './components/layout/Sidebar'
 
 function App() {
 
@@ -9,9 +11,11 @@ function App() {
 
       <Header />
 
-      <div className="flex-1">
+      <main className="flex-1 flex flex-col md:flex-row gap-4">
+        <MobileToolBar />
+        <Sidebar />
         Hello World
-      </div>
+      </main>
 
       <Footer />
     </>

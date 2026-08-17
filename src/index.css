@@ -281,3 +281,109 @@
 .link-btn:hover {
     color: var(--accent-primary);
 }
+
+
+input[type="text"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+select {
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    color: var(--text-primary);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+    cursor: pointer;
+}
+
+select option {
+    color: var(--text-on-accent);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 22%, transparent);
+}
+
+
+/* ================================
+   Custom Scrollbar
+================================ */
+
+.scrollbar {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-primary) transparent;
+}
+
+/* WebKit */
+.scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 999px;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+
+/* ================================
+   Vertical Position
+================================ */
+
+/* Right — default */
+.scrollbar-right {
+    direction: ltr;
+}
+
+/* Left */
+.scrollbar-left {
+    direction: rtl;
+}
+
+.scrollbar-left>* {
+    direction: ltr;
+}
+
+
+/* ================================
+   Horizontal Position
+================================ */
+
+/* Bottom — default */
+.scrollbar-bottom {
+    direction: ltr;
+}
+
+/* Top */
+.scrollbar-top {
+    direction: rtl;
+}
+
+.scrollbar-top>* {
+    direction: ltr;
+}
+
+
+/* ================================
+   Search Input
+================================ */
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
