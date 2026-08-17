@@ -6,7 +6,7 @@ import DeleteTasks from "../toolbars/DeleteTasks";
 
 export default function Sidebar() {
     return (
-        <aside className='hidden md:block w-[370px] border-r border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl shadow-sm custom-scrollbar-left'>
+        <aside className='hidden md:block w-[370px] border-r border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl shadow-sm scrollbar scrollbar-left'>
             <div className="px-3.5 py-4 flex flex-col items-center gap-4 overflow-hidden inset-shadow-2xs">
                 {/* Statistics */}
                 <Statistics />

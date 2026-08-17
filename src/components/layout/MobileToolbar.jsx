@@ -22,8 +22,8 @@ export default function MobileToolBar() {
                 <Categories />
                 <Sorting />
 
-                <div class="relative">
-                    <button id="bulkMenuBtn" className="inline-flex items-center justify-center w-9 h-9 rounded-sm border border-[var(--glass-border)] bg-[var(--glass-bg)] text-text-secondary transition-all duration-200 hover:text-[var(--text-primary)] hover:border-accent-primary hover:-translate-y-px active:translate-y-0" type="button" aria-haspopup="true" aria-expanded="false"
+                <div className="relative">
+                    <button id="bulkMenuBtn" className="icon-btn sm" type="button" aria-haspopup="true" aria-expanded="false"
                         title="Bulk actions" aria-label="Bulk actions">
                         <BiDotsVertical size={17} />
                     </button>

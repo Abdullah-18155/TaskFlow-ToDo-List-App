@@ -52,14 +52,6 @@
     --priority-low: #6ed9a8;
     --priority-low-soft: rgba(110, 217, 168, 0.16);
 
-    /* Category Colors */
-    --cat-personal: #8b95f6;
-    --cat-work: #4fb8e0;
-    --cat-study: #c58ff2;
-    --cat-shopping: #f2926b;
-    --cat-health: #6ed9a8;
-    --cat-custom: #d1a5e8;
-
     /* Z-index */
     --z-toast: 100;
     --z-modal: 90;
@@ -386,4 +378,139 @@ select:focus {
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
     appearance: none;
+}
+
+
+/* ---- Signature element: ink-ring checkbox ---- */
+.ink-checkbox {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--text-muted);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    margin-top: 2px;
+    position: relative;
+    transition: border-color var(--dur-fast), background var(--dur-med) var(--ease-spring), transform var(--dur-fast) var(--ease-spring);
+}
+
+.ink-checkbox:hover {
+    border-color: var(--accent-primary);
+    transform: scale(1.08);
+}
+
+.ink-checkbox svg {
+    width: 13px;
+    height: 13px;
+    transform: scale(0.4);
+    opacity: 0;
+    transition: transform var(--dur-med) var(--ease-spring), opacity var(--dur-fast);
+}
+
+.ink-checkbox[aria-checked="true"] {
+    background: var(--accent-mint);
+    border-color: var(--accent-mint);
+    color: var(--text-on-accent);
+}
+
+.ink-checkbox[aria-checked="true"] svg {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.ink-checkbox[aria-checked="true"]::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-mint);
+    opacity: 0;
+    animation: inkRipple var(--dur-slow) var(--ease-out);
+}
+
+@keyframes inkRipple {
+    from {
+        opacity: 0.6;
+        transform: scale(0.6);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+
+/* Badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+
+.badge-priority.prio-high {
+    background: var(--priority-high-soft);
+    color: var(--priority-high);
+}
+
+.badge-priority.prio-medium {
+    background: var(--priority-medium-soft);
+    color: var(--priority-medium);
+}
+
+.badge-priority.prio-low {
+    background: var(--priority-low-soft);
+    color: var(--priority-low);
+}
+
+.badge-due.is-overdue {
+    background: color-mix(in srgb, var(--overdue-color) 16%, transparent);
+    color: var(--overdue-color);
+    font-weight: 600;
+}
+
+/* Icon Button */
+.icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-spring), color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
+    padding: var(--sp-1);
+}
+
+.icon-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+}
+
+.icon-btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+.icon-btn.sm {
+    width: 33px;
+    height: 33px;
+}
+
+.icon-btn.danger:hover {
+    color: var(--accent-rose);
+    border-color: var(--accent-rose);
 }
