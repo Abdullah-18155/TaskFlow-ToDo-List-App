@@ -1,6 +1,6 @@
 import { formatDate, formatTime } from '../../utils/helpers'
 import { categories } from '../../constants/categories'
-import { BiPin, BiStar, BiEdit, BiTrash } from 'react-icons/bi';
+import { BiPin, BiSolidPin, BiStar, BiEdit, BiTrash, BiSolidStar } from 'react-icons/bi';
 
 export default function TaskCard({ task }) {
     const dueLabel = task.dueDate
@@ -37,6 +37,8 @@ export default function TaskCard({ task }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-md font-medium">{task.title}</span>
+                        {task.pinned && <BiSolidPin className='text-red-400' title="Pinned" />}
+                        {task.favorite && <BiSolidStar className='text-yellow-400' title="Favorite" />}
                     </div>
                     <p className="mt-1 text-sm text-text-secondary">
                         {task.notes}
@@ -54,10 +56,10 @@ export default function TaskCard({ task }) {
                 <div className="opacity-100 md:opacity-0 md:translate-x-1.5 group-hover:md:opacity-100 group-hover:md:translate-x-0 transition-all duration-200 ease-out
                     flex items-center gap-1 shrink-0 ">
                     <button className="icon-btn sm" data-action="favorite" aria-label="Toggle favorite" title={`${task.favorite ? "Remove from" : "Add to"} favorites`}>
-                        <BiStar />
+                        {task.favorite ? <BiSolidStar className='text-yellow-400' /> : <BiStar />}
                     </button>
                     <button className="icon-btn sm" data-action="pin" aria-label="Toggle pin" title={`${task.pinned ? "Unpin" : "Pin to top"}`}>
-                        <BiPin />
+                        {task.pinned ? <BiSolidPin className='text-red-400' /> : <BiPin />}
                     </button>
                     <button className="icon-btn sm" data-action="edit" aria-label="Edit task" title="Edit task">
                         <BiEdit />

@@ -6,7 +6,7 @@ import logo from '/icon.png'
 import { BiMoon, BiPlus } from 'react-icons/bi';
 import { CgSun } from 'react-icons/cg';
 
-export default function Header() {
+export default function Header({ setIsOpenAdd }) {
     const { theme, toggleTheme } = useTheme();
 
     return (
@@ -41,7 +41,7 @@ export default function Header() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    <Button className="group px-3 hover:px-4" title="Add New Task">
+                    <Button className="group px-3 hover:px-4" title="Add New Task" onClick={() => setIsOpenAdd(true)}>
                         <BiPlus
                             size={20}
                             className="shrink-0"

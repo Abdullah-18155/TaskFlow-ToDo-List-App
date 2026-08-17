@@ -43,6 +43,7 @@ export default function useTasks() {
                 ? notes.trim()
                 : "";
 
+        if (category.toLowerCase() === "all") category = "general";
         const cleanCategory = category
             .trim()
             .toLowerCase()
