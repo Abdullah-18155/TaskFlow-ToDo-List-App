@@ -1,6 +1,25 @@
+import { useEffect, useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
+import { debounce } from "../../utils/helpers";
 
-export default function Search() {
+export default function Search({ value = "", onChange }) {
+    const [inputValue, setInputValue] = useState(value);
+
+    useEffect(() => {
+        setInputValue(value);
+    }, [value]);
+
+    const debouncedOnChange = useMemo(
+        () => debounce((nextValue) => onChange?.(nextValue), 250),
+        [onChange]
+    );
+
+    const handleChange = (event) => {
+        const nextValue = event.target.value;
+        setInputValue(nextValue);
+        debouncedOnChange(nextValue);
+    };
+
     return (
         <div className="relative w-full md:w-75 lg:w-88">
             <BiSearch
@@ -21,6 +40,8 @@ export default function Search() {
                 id="searchInput"
                 placeholder="Search tasks..."
                 aria-label="Search tasks"
+                value={inputValue}
+                onChange={handleChange}
                 className="
                     w-full
                     md:w-[80%]

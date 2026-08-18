@@ -6,7 +6,7 @@ import logo from '/icon.png'
 import { BiMoon, BiPlus } from 'react-icons/bi';
 import { CgSun } from 'react-icons/cg';
 
-export default function Header({ setIsOpenAdd }) {
+export default function Header({ setIsOpenAdd, searchValue = '', onSearchChange }) {
     const { theme, toggleTheme } = useTheme();
 
     return (
@@ -36,7 +36,7 @@ export default function Header({ setIsOpenAdd }) {
 
                 {/* Search - visible on mobile and desktop */}
                 <div className="hidden flex-1 md:flex md:justify-center px-2 md:px-0 items-center">
-                    <Search />
+                    <Search value={searchValue} onChange={onSearchChange} />
                 </div>
 
                 {/* Actions */}

@@ -9,7 +9,7 @@ export default function EmptyState({ openAdd }) {
                 <path d="M9 11l3 3L22 4" />
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
             </svg>
-            <h2 id="emptyStateTitle" className="font-display font-semibold m-0 text-[var(--text-primary)] text-lg mb-2.5">Nothing on the TaskFlow yet</h2>
+            <h2 id="emptyStateTitle" className="font-display font-semibold m-0 text-[var(--text-primary)] text-md sm:text-lg mb-2.5">Nothing on the TaskFlow yet</h2>
             <Button onClick={openAdd}><BiPlus size={18} /> Add New Task</Button>
         </div>
     )

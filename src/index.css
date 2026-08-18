@@ -199,7 +199,12 @@
     --color-cat-shopping: var(--cat-shopping);
     --color-cat-health: var(--cat-health);
     --color-cat-custom: var(--cat-custom);
+
+
+    --animate-expand-in: expandIn var(--dur-fast) var(--ease-out);
+    --animate-float-y: floatY 4s ease-in-out infinite;
 }
+
 
 
 /* ==========================================================================
@@ -292,7 +297,7 @@ select {
 }
 
 select option {
-    color: var(--text-on-accent);
+    color: #0d1117;
 }
 
 input:focus,
@@ -513,4 +518,29 @@ input[type="search"]::-webkit-search-cancel-button {
 .icon-btn.danger:hover {
     color: var(--accent-rose);
     border-color: var(--accent-rose);
+}
+
+/* Animation */
+@keyframes expandIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatY {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
 }

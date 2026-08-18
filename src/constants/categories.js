@@ -6,6 +6,12 @@ import { BsHeartPulse } from "react-icons/bs";
 
 export const categories = [
     {
+        category: "General",
+        icon: BiUser,
+        color: "#6B7280",
+        gradient: "from-slate-400 to-slate-600",
+    },
+    {
         category: "Personal",
         icon: BiUser,
         color: "#8B5CF6",

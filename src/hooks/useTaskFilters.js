@@ -1,3 +1,5 @@
+import { useCallback, useState } from "react";
+
 export const useTaskFilters = (tasks) => {
     const [filters, setFilters] = useState({
         search: "",
@@ -31,7 +33,7 @@ export const useTaskFilters = (tasks) => {
         // Sorting
         switch (filters.sort) {
             case "oldest":
-                result.sort((a, b) => a.createdAt - b.createdAt);
+                result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 break;
             case "az":
                 result.sort((a, b) => a.title.localeCompare(b.title));
@@ -41,7 +43,7 @@ export const useTaskFilters = (tasks) => {
                 break;
             case "newest":
             default:
-                result.sort((a, b) => b.createdAt - a.createdAt);
+                result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                 break;
         }
 

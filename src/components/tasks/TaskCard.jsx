@@ -2,7 +2,7 @@ import { formatDate, formatTime } from '../../utils/helpers'
 import { categories } from '../../constants/categories'
 import { BiPin, BiSolidPin, BiStar, BiEdit, BiTrash, BiSolidStar } from 'react-icons/bi';
 
-export default function TaskCard({ task }) {
+export default function TaskCard({ task, toggleComplete, toggleFavorite, togglePinned, onDeleteTask, onEdit }) {
     const dueLabel = task.dueDate
         ? `${formatDate(task.dueDate)}${task.dueTime ? " · " + formatTime(task.dueTime) : ""}`
         : "";
@@ -21,6 +21,7 @@ export default function TaskCard({ task }) {
             style={{
                 borderColor: `var(--priority-${task.priority.toLowerCase()})`
             }}
+            onDoubleClick={() => onEdit?.(task)}
         >
             <div className="flex flex-col sm:flex-row items-start gap-3 p-4
             border border-[var(--glass-border)]
@@ -28,6 +29,7 @@ export default function TaskCard({ task }) {
             backdrop-blur-2xl
             ">
                 <button className="ink-checkbox"
+                    onClick={() => toggleComplete(task.id)}
                     data-action="toggle"
                     role="checkbox"
                     aria-checked={task.completed}
@@ -55,16 +57,40 @@ export default function TaskCard({ task }) {
 
                 <div className="opacity-100 md:opacity-0 md:translate-x-1.5 group-hover:md:opacity-100 group-hover:md:translate-x-0 transition-all duration-200 ease-out
                     flex items-center gap-1 shrink-0 ">
-                    <button className="icon-btn sm" data-action="favorite" aria-label="Toggle favorite" title={`${task.favorite ? "Remove from" : "Add to"} favorites`}>
+                    <button
+                        className="icon-btn sm"
+                        data-action="favorite"
+                        aria-label="Toggle favorite"
+                        title={`${task.favorite ? "Remove from" : "Add to"} favorites`}
+                        onClick={() => toggleFavorite(task.id)}
+                    >
                         {task.favorite ? <BiSolidStar className='text-yellow-400' /> : <BiStar />}
                     </button>
-                    <button className="icon-btn sm" data-action="pin" aria-label="Toggle pin" title={`${task.pinned ? "Unpin" : "Pin to top"}`}>
+                    <button
+                        className="icon-btn sm"
+                        data-action="pin"
+                        aria-label="Toggle pin"
+                        title={`${task.pinned ? "Unpin" : "Pin to top"}`}
+                        onClick={() => togglePinned(task.id)}
+                    >
                         {task.pinned ? <BiSolidPin className='text-red-400' /> : <BiPin />}
                     </button>
-                    <button className="icon-btn sm" data-action="edit" aria-label="Edit task" title="Edit task">
+                    <button
+                        className="icon-btn sm"
+                        data-action="edit"
+                        aria-label="Edit task"
+                        title="Edit task"
+                        onClick={() => onEdit?.(task)}
+                    >
                         <BiEdit />
                     </button>
-                    <button className="icon-btn sm danger" data-action="delete" aria-label="Delete task" title="Delete task">
+                    <button
+                        className="icon-btn sm danger"
+                        data-action="delete"
+                        aria-label="Delete task"
+                        title="Delete task"
+                        onClick={() => onDeleteTask?.(task.id)}
+                    >
                         <BiTrash />
                     </button>
                 </div>

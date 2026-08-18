@@ -1,10 +1,10 @@
 const filters = [
-    { label: "All", value: "all", isActive: true },
-    { label: "Active", value: "active", isActive: false },
-    { label: "Completed", value: "completed", isActive: false },
+    { label: "All", value: "all" },
+    { label: "Active", value: "active" },
+    { label: "Completed", value: "completed" },
 ];
 
-export default function Segement({ filterStatus, setFilterStatus }) {
+export default function Segement({ filterStatus = "all", setFilterStatus }) {
     return (
         <div
             className="grid grid-cols-3 bg-[var(--input-bg)]
@@ -14,17 +14,23 @@ export default function Segement({ filterStatus, setFilterStatus }) {
             aria-label="Filter tasks"
             id="filterSegmented">
 
-            {filters.map(filter => (
-                <button key={filter.value}
-                    className={`${filter.isActive ? 'bg-[var(--accent-primary)] text-[var(--text-on-accent)]' : 'bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}
-                        text-sm text-[var(--font-body)] px-3 py-1.5
-                        rounded-pill transition-all duration-[var(--dur-fast)]
-                        `}
-                    role="tab"
-                    aria-selected={filter.isActive}
-                    data-filter={filter.value}
-                    type="button">{filter.label}</button>
-            ))}
+            {filters.map(filter => {
+                const isActive = filterStatus === filter.value;
+
+                return (
+                    <button key={filter.value}
+                        className={`${isActive ? 'bg-[var(--accent-primary)] text-[var(--text-on-accent)]' : 'bg-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}
+                            text-sm text-[var(--font-body)] px-3 py-1.5
+                            rounded-pill transition-all duration-[var(--dur-fast)]
+                            `}
+                        role="tab"
+                        aria-selected={isActive}
+                        data-filter={filter.value}
+                        type="button"
+                        onClick={() => setFilterStatus?.(filter.value)}
+                    >{filter.label}</button>
+                );
+            })}
         </div>
     )
 }

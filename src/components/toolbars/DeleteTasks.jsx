@@ -2,7 +2,7 @@ import { GiBroom } from "react-icons/gi";
 import Button from "../common/Button";
 import { BsTrash } from "react-icons/bs";
 
-export default function DeleteTasks() {
+export default function DeleteTasks({ onDeleteCompleted, onDeleteAll }) {
 
     return (
         <>
@@ -11,6 +11,7 @@ export default function DeleteTasks() {
                     style="glass"
                     className="flex-1"
                     title="Delete Completed Tasks"
+                    onClick={onDeleteCompleted}
                 >
                     <GiBroom size={18} />
                     Delete Completed
@@ -20,6 +21,7 @@ export default function DeleteTasks() {
                     style='danger'
                     className="flex-1"
                     title="Delete All Tasks"
+                    onClick={onDeleteAll}
                 >
                     <BsTrash size={16} />
                     Delete All Tasks

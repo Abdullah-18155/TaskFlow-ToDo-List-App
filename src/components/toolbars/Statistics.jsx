@@ -1,12 +1,17 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 
-export default function Statistics() {
+export default function Statistics({ tasks = [] }) {
+    const total = tasks.length;
+    const done = tasks.filter((task) => task.completed).length;
+    const pending = total - done;
+    const highPriority = tasks.filter((task) => task.priority?.toLowerCase() === 'high').length;
+    const completion = total ? Math.round((done / total) * 100) : 0;
 
     const statsDisplay = [
-        { value: 0, label: "total" },
-        { value: 0, label: "pending" },
-        { value: 0, label: "done" },
-        { value: 0, label: "high priority" }
+        { value: total, label: "total" },
+        { value: pending, label: "pending" },
+        { value: done, label: "done" },
+        { value: highPriority, label: "high priority" }
     ];
 
     return (
@@ -27,13 +32,17 @@ export default function Statistics() {
             </div>
             <div className="flex items-center gap-[var(--sp-3)] shrink-0 w-full">
                 <div className="flex-1 h-2 rounded-pill bg-[var(--input-bg)] overflow-hidden" role="progressbar" aria-label="Completion percentage"
-                    aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+                    aria-valuemin="0" aria-valuemax="100" aria-valuenow={completion} id="progressBar">
                     <div
-                        className="h-full rounded-pill bg-[linear-gradient(90deg, var(--accent-primary), var(--accent-mint))] transition-all duration-500 ease-out"
+                        className="h-full rounded-pill transition-all duration-500 ease-out"
                         id="progressFill"
+                        style={{
+                            width: `${completion}%`,
+                            background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-mint))'
+                        }}
                     ></div>
                 </div>
-                <span className="font-mono text-sm text-text-secondary" id="progressPct">0%</span>
+                <span className="font-mono text-sm text-text-secondary" id="progressPct">{completion}%</span>
             </div>
         </section>
     )

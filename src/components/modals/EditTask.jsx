@@ -4,10 +4,12 @@ import { categories } from '../../constants/categories'
 import ConfirmModal from './ConfirmModal'
 import useConfirm from '../../hooks/useConfirm'
 
-export default function AddTask({
+export default function EditTask({
     isOpen,
     setIsOpen,
-    addTask,
+    editingTask,
+    updateTask,
+    setEditingTask,
     onSuccess,
 }) {
     const modalRef = useRef(null)
@@ -29,13 +31,43 @@ export default function AddTask({
         handleCancel,
     } = useConfirm()
 
-    function hasFormData() {
-        return Boolean(
-            inputRefs.title.current?.value.trim() ||
-            inputRefs.description.current?.value.trim() ||
-            inputRefs.dueDate.current?.value ||
-            inputRefs.dueTime.current?.value
-        )
+    function getFormSnapshot() {
+        return {
+            title: inputRefs.title.current?.value.trim() || '',
+            description: inputRefs.description.current?.value.trim() || '',
+            category: inputRefs.category.current?.value || 'general',
+            priority: inputRefs.priority.current?.value || 'medium',
+            dueDate: inputRefs.dueDate.current?.value || '',
+            dueTime: inputRefs.dueTime.current?.value || '',
+        }
+    }
+
+    function populateForm(task) {
+        if (!task) return
+
+        if (inputRefs.title.current) inputRefs.title.current.value = task.title || ''
+        if (inputRefs.description.current) inputRefs.description.current.value = task.notes || ''
+        if (inputRefs.category.current) inputRefs.category.current.value = String(task.category || 'general')
+        if (inputRefs.priority.current) inputRefs.priority.current.value = task.priority || 'medium'
+        if (inputRefs.dueDate.current) inputRefs.dueDate.current.value = task.dueDate || ''
+        if (inputRefs.dueTime.current) inputRefs.dueTime.current.value = task.dueTime || ''
+        setTitleLength(task.title?.length || 0)
+    }
+
+    function hasRealChanges() {
+        if (!editingTask) return false
+
+        const current = getFormSnapshot()
+        const original = {
+            title: editingTask.title || '',
+            description: editingTask.notes || '',
+            category: editingTask.category || 'general',
+            priority: editingTask.priority || 'medium',
+            dueDate: editingTask.dueDate || '',
+            dueTime: editingTask.dueTime || '',
+        }
+
+        return JSON.stringify(current) !== JSON.stringify(original)
     }
 
     function resetForm() {
@@ -48,24 +80,28 @@ export default function AddTask({
         setTitleLength(0)
     }
 
-    async function closeAddModal() {
-        if (!hasFormData()) {
+    async function closeEditModal() {
+        if (!hasRealChanges()) {
             resetForm()
+            setEditingTask?.(null)
             setIsOpen(false)
             return
         }
 
         const confirmed = await confirm(
-            'Are you sure you want to close? Your entered data will be lost.'
+            'Are you sure you want to close? Your changes will be lost.'
         )
 
         if (confirmed) {
             resetForm()
+            setEditingTask?.(null)
             setIsOpen(false)
         }
     }
 
     function handleSubmitTask() {
+        if (!editingTask) return
+
         const title = inputRefs.title.current?.value.trim()
         const description = inputRefs.description.current?.value.trim()
         const category = inputRefs.category.current?.value
@@ -73,7 +109,7 @@ export default function AddTask({
         const dueDate = inputRefs.dueDate.current?.value
         const dueTime = inputRefs.dueTime.current?.value
 
-        const result = addTask({
+        const result = updateTask(editingTask.id, {
             title,
             notes: description,
             category,
@@ -89,13 +125,18 @@ export default function AddTask({
 
         onSuccess?.()
         resetForm()
+        setEditingTask?.(null)
         setIsOpen(false)
     }
 
     useEffect(() => {
         if (!isOpen) return
 
-        resetForm()
+        if (editingTask) {
+            populateForm(editingTask)
+        } else {
+            resetForm()
+        }
 
         const focusTimer = window.setTimeout(() => {
             inputRefs.title.current?.focus()
@@ -103,11 +144,8 @@ export default function AddTask({
         }, 50)
 
         const handleClickOutside = (event) => {
-            if (
-                modalRef.current &&
-                !modalRef.current.contains(event.target)
-            ) {
-                closeAddModal()
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                closeEditModal()
             }
         }
 
@@ -117,14 +155,14 @@ export default function AddTask({
             window.clearTimeout(focusTimer)
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [isOpen])
+    }, [isOpen, editingTask])
 
     useEffect(() => {
         if (!isOpen) return
 
         const handleEscape = (event) => {
             if (event.key === 'Escape') {
-                closeAddModal()
+                closeEditModal()
             }
         }
 
@@ -151,21 +189,17 @@ export default function AddTask({
             document.removeEventListener('keydown', handleEscape)
             document.removeEventListener('keydown', handleEnter)
         }
-    }, [isOpen])
+    }, [isOpen, editingTask])
 
     return (
         <>
-            {/* Add Task Modal */}
             <div
                 className={`
                     fixed inset-0 z-30
                     flex justify-center items-center
                     backdrop-blur-sm bg-gray-900/70
                     transition-all duration-300 ease-out
-                    ${isOpen
-                        ? 'opacity-100'
-                        : 'opacity-0 pointer-events-none'
-                    }
+                    ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
                 `}
             >
                 <div
@@ -181,60 +215,45 @@ export default function AddTask({
                         m-2
                         shadow-2xl
                         transition-all duration-300 ease-out
-                        ${isOpen
-                            ? 'opacity-100 scale-100 translate-y-0'
-                            : 'opacity-0 scale-95 translate-y-4'
-                        }
+                        ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}
                     `}
                 >
-                    <h2 className="font-display font-semibold text-lg">
-                        Add New Task
-                    </h2>
+                    <h2 className="font-display font-semibold text-lg">Edit Task</h2>
 
-                    {/* Title */}
                     <div className="w-full flex flex-col gap-2.5 sm:flex-row justify-between">
                         <input
                             type="text"
-                            id="taskInput"
+                            id="editTaskInput"
                             className="flex-3 min-w-75 w-full"
                             ref={inputRefs.title}
                             placeholder="What needs doing?"
                             maxLength="120"
-                            aria-label="New task title"
+                            aria-label="Edit task title"
                             onChange={(event) => setTitleLength(event.target.value.length)}
                         />
 
                         <div className="flex-1 w-full flex flex-row gap-1.5 justify-between items-center">
-                            <span
-                                className="font-mono text-sm text-text-muted"
-                                id="charCount"
-                            >
+                            <span className="font-mono text-sm text-text-muted" id="editCharCount">
                                 {titleLength}/120
                             </span>
 
-                            <Button onClick={handleSubmitTask} id="taskSubmitBtn">
-                                Add task
+                            <Button onClick={handleSubmitTask} id="editTaskSubmitBtn">
+                                Save changes
                             </Button>
                         </div>
                     </div>
 
                     <div className="w-full h-px bg-gray-500/30" />
 
-                    {/* Options */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full">
-
-                        {/* Category */}
                         <div className="flex flex-col gap-0.5">
-                            <label
-                                className="text-sm text-text-secondary uppercase tracking-wider"
-                                htmlFor="categoryDropDown"
-                            >
+                            <label className="text-sm text-text-secondary uppercase tracking-wider" htmlFor="editCategoryDropDown">
                                 Category
                             </label>
 
                             <select
                                 className="md:w-full"
-                                id="categoryDropDown"
+                                id="editCategoryDropDown"
                                 aria-label="Select a category"
                                 defaultValue="general"
                                 ref={inputRefs.category}
@@ -242,9 +261,7 @@ export default function AddTask({
                                 {categories.map((category) => (
                                     <option
                                         key={category.category}
-                                        value={category.category
-                                            .toLowerCase()
-                                            .replace(/\s+/g, '-')}
+                                        value={category.category.toLowerCase().replace(/\s+/g, '-')}
                                     >
                                         {category.category}
                                     </option>
@@ -252,18 +269,14 @@ export default function AddTask({
                             </select>
                         </div>
 
-                        {/* Priority */}
                         <div className="flex flex-col gap-0.5">
-                            <label
-                                className="text-sm text-text-secondary uppercase tracking-wider"
-                                htmlFor="priorityDropdown"
-                            >
+                            <label className="text-sm text-text-secondary uppercase tracking-wider" htmlFor="editPriorityDropdown">
                                 Priority
                             </label>
 
                             <select
                                 className="md:w-full"
-                                id="priorityDropdown"
+                                id="editPriorityDropdown"
                                 aria-label="Select priority"
                                 defaultValue="medium"
                                 ref={inputRefs.priority}
@@ -274,51 +287,31 @@ export default function AddTask({
                             </select>
                         </div>
 
-                        {/* Due Date */}
                         <div className="flex flex-col gap-0.5">
-                            <label
-                                htmlFor="taskDueDate"
-                                className="text-sm text-text-secondary uppercase tracking-wider"
-                            >
+                            <label htmlFor="editTaskDueDate" className="text-sm text-text-secondary uppercase tracking-wider">
                                 Due Date
                             </label>
 
-                            <input
-                                type="date"
-                                id="taskDueDate"
-                                ref={inputRefs.dueDate}
-                            />
+                            <input type="date" id="editTaskDueDate" ref={inputRefs.dueDate} />
                         </div>
 
-                        {/* Due Time */}
                         <div className="flex flex-col gap-0.5">
-                            <label
-                                htmlFor="taskDueTime"
-                                className="text-sm text-text-secondary uppercase tracking-wider"
-                            >
+                            <label htmlFor="editTaskDueTime" className="text-sm text-text-secondary uppercase tracking-wider">
                                 Due time
                             </label>
 
-                            <input
-                                type="time"
-                                id="taskDueTime"
-                                ref={inputRefs.dueTime}
-                            />
+                            <input type="time" id="editTaskDueTime" ref={inputRefs.dueTime} />
                         </div>
                     </div>
 
-                    {/* Notes */}
                     <div className="flex flex-col w-full gap-0.5">
-                        <label
-                            htmlFor="taskNotes"
-                            className="text-sm text-text-secondary uppercase tracking-wider"
-                        >
+                        <label htmlFor="editTaskNotes" className="text-sm text-text-secondary uppercase tracking-wider">
                             Notes
                         </label>
 
                         <input
                             type="text"
-                            id="taskNotes"
+                            id="editTaskNotes"
                             className="w-full min-w-75"
                             ref={inputRefs.description}
                             placeholder="Add some notes..."
@@ -329,7 +322,6 @@ export default function AddTask({
                 </div>
             </div>
 
-            {/* Confirmation Modal */}
             <ConfirmModal
                 isOpen={confirmState.isOpen}
                 message={confirmState.message}
