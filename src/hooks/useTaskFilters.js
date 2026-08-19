@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-export const useTaskFilters = (tasks) => {
+export const useTaskFilters = () => {
     const [filters, setFilters] = useState({
         search: "",
         status: "all", // all | active | completed

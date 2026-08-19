@@ -9,18 +9,24 @@ export default function AddTask({
     setIsOpen,
     addTask,
     onSuccess,
+    error
 }) {
     const modalRef = useRef(null)
-    const [titleLength, setTitleLength] = useState(0)
+    const formDataRef = useRef(null)
 
-    const inputRefs = {
-        title: useRef(null),
-        description: useRef(null),
-        category: useRef(null),
-        priority: useRef(null),
-        dueDate: useRef(null),
-        dueTime: useRef(null),
-    }
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        category: 'general',
+        priority: 'medium',
+        dueDate: '',
+        dueTime: '',
+    })
+
+    // Keep ref in sync with state
+    useEffect(() => {
+        formDataRef.current = formData
+    }, [formData])
 
     const {
         confirm,
@@ -30,22 +36,22 @@ export default function AddTask({
     } = useConfirm()
 
     function hasFormData() {
+        const current = formDataRef.current
         return Boolean(
-            inputRefs.title.current?.value.trim() ||
-            inputRefs.description.current?.value.trim() ||
-            inputRefs.dueDate.current?.value ||
-            inputRefs.dueTime.current?.value
+            current?.title?.trim() ||
+            current?.description?.trim()
         )
     }
 
     function resetForm() {
-        if (inputRefs.title.current) inputRefs.title.current.value = ''
-        if (inputRefs.description.current) inputRefs.description.current.value = ''
-        if (inputRefs.category.current) inputRefs.category.current.value = 'general'
-        if (inputRefs.priority.current) inputRefs.priority.current.value = 'medium'
-        if (inputRefs.dueDate.current) inputRefs.dueDate.current.value = ''
-        if (inputRefs.dueTime.current) inputRefs.dueTime.current.value = ''
-        setTitleLength(0)
+        setFormData({
+            title: '',
+            description: '',
+            category: 'general',
+            priority: 'medium',
+            dueDate: '',
+            dueTime: '',
+        })
     }
 
     async function closeAddModal() {
@@ -66,24 +72,21 @@ export default function AddTask({
     }
 
     function handleSubmitTask() {
-        const title = inputRefs.title.current?.value.trim()
-        const description = inputRefs.description.current?.value.trim()
-        const category = inputRefs.category.current?.value
-        const priority = inputRefs.priority.current?.value
-        const dueDate = inputRefs.dueDate.current?.value
-        const dueTime = inputRefs.dueTime.current?.value
+        const current = formDataRef.current
+        const title = current?.title?.trim()
+        const description = current?.description?.trim()
 
         const result = addTask({
             title,
             notes: description,
-            category,
-            priority,
-            dueDate,
-            dueTime,
+            category: current?.category,
+            priority: current?.priority,
+            dueDate: current?.dueDate,
+            dueTime: current?.dueTime,
         })
 
         if (!result.success) {
-            console.error(result.error)
+            error(result.error || 'Failed to add task. Please try again.')
             return
         }
 
@@ -92,14 +95,22 @@ export default function AddTask({
         setIsOpen(false)
     }
 
+    function handleInputChange(field, value) {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
     useEffect(() => {
         if (!isOpen) return
 
         resetForm()
 
         const focusTimer = window.setTimeout(() => {
-            inputRefs.title.current?.focus()
-            inputRefs.title.current?.select?.()
+            const titleInput = document.getElementById('taskInput')
+            titleInput?.focus()
+            titleInput?.select?.()
         }, 50)
 
         const handleClickOutside = (event) => {
@@ -197,11 +208,11 @@ export default function AddTask({
                             type="text"
                             id="taskInput"
                             className="flex-3 min-w-75 w-full"
-                            ref={inputRefs.title}
+                            value={formData.title}
+                            onChange={(e) => handleInputChange('title', e.target.value)}
                             placeholder="What needs doing?"
                             maxLength="120"
                             aria-label="New task title"
-                            onChange={(event) => setTitleLength(event.target.value.length)}
                         />
 
                         <div className="flex-1 w-full flex flex-row gap-1.5 justify-between items-center">
@@ -209,7 +220,7 @@ export default function AddTask({
                                 className="font-mono text-sm text-text-muted"
                                 id="charCount"
                             >
-                                {titleLength}/120
+                                {formData.title.length}/120
                             </span>
 
                             <Button onClick={handleSubmitTask} id="taskSubmitBtn">
@@ -236,8 +247,8 @@ export default function AddTask({
                                 className="md:w-full"
                                 id="categoryDropDown"
                                 aria-label="Select a category"
-                                defaultValue="general"
-                                ref={inputRefs.category}
+                                value={formData.category}
+                                onChange={(e) => handleInputChange('category', e.target.value)}
                             >
                                 {categories.map((category) => (
                                     <option
@@ -265,8 +276,8 @@ export default function AddTask({
                                 className="md:w-full"
                                 id="priorityDropdown"
                                 aria-label="Select priority"
-                                defaultValue="medium"
-                                ref={inputRefs.priority}
+                                value={formData.priority}
+                                onChange={(e) => handleInputChange('priority', e.target.value)}
                             >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -286,7 +297,8 @@ export default function AddTask({
                             <input
                                 type="date"
                                 id="taskDueDate"
-                                ref={inputRefs.dueDate}
+                                value={formData.dueDate}
+                                onChange={(e) => handleInputChange('dueDate', e.target.value)}
                             />
                         </div>
 
@@ -302,7 +314,8 @@ export default function AddTask({
                             <input
                                 type="time"
                                 id="taskDueTime"
-                                ref={inputRefs.dueTime}
+                                value={formData.dueTime}
+                                onChange={(e) => handleInputChange('dueTime', e.target.value)}
                             />
                         </div>
                     </div>
@@ -320,7 +333,8 @@ export default function AddTask({
                             type="text"
                             id="taskNotes"
                             className="w-full min-w-75"
-                            ref={inputRefs.description}
+                            value={formData.description}
+                            onChange={(e) => handleInputChange('description', e.target.value)}
                             placeholder="Add some notes..."
                             maxLength="120"
                             aria-label="Task notes"

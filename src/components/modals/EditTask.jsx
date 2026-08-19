@@ -11,18 +11,29 @@ export default function EditTask({
     updateTask,
     setEditingTask,
     onSuccess,
+    error
 }) {
     const modalRef = useRef(null)
-    const [titleLength, setTitleLength] = useState(0)
+    const formDataRef = useRef(null)
+    const originalTaskRef = useRef(null)
 
-    const inputRefs = {
-        title: useRef(null),
-        description: useRef(null),
-        category: useRef(null),
-        priority: useRef(null),
-        dueDate: useRef(null),
-        dueTime: useRef(null),
-    }
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        category: 'general',
+        priority: 'medium',
+        dueDate: '',
+        dueTime: '',
+    })
+
+    // Keep refs in sync with state
+    useEffect(() => {
+        formDataRef.current = formData
+    }, [formData])
+
+    useEffect(() => {
+        originalTaskRef.current = editingTask
+    }, [editingTask])
 
     const {
         confirm,
@@ -32,52 +43,56 @@ export default function EditTask({
     } = useConfirm()
 
     function getFormSnapshot() {
+        const current = formDataRef.current
         return {
-            title: inputRefs.title.current?.value.trim() || '',
-            description: inputRefs.description.current?.value.trim() || '',
-            category: inputRefs.category.current?.value || 'general',
-            priority: inputRefs.priority.current?.value || 'medium',
-            dueDate: inputRefs.dueDate.current?.value || '',
-            dueTime: inputRefs.dueTime.current?.value || '',
+            title: current?.title?.trim() || '',
+            description: current?.description?.trim() || '',
+            category: current?.category || 'general',
+            priority: current?.priority || 'medium',
+            dueDate: current?.dueDate || '',
+            dueTime: current?.dueTime || '',
         }
     }
 
     function populateForm(task) {
         if (!task) return
 
-        if (inputRefs.title.current) inputRefs.title.current.value = task.title || ''
-        if (inputRefs.description.current) inputRefs.description.current.value = task.notes || ''
-        if (inputRefs.category.current) inputRefs.category.current.value = String(task.category || 'general')
-        if (inputRefs.priority.current) inputRefs.priority.current.value = task.priority || 'medium'
-        if (inputRefs.dueDate.current) inputRefs.dueDate.current.value = task.dueDate || ''
-        if (inputRefs.dueTime.current) inputRefs.dueTime.current.value = task.dueTime || ''
-        setTitleLength(task.title?.length || 0)
+        setFormData({
+            title: task.title || '',
+            description: task.notes || '',
+            category: String(task.category || 'general'),
+            priority: task.priority || 'medium',
+            dueDate: task.dueDate || '',
+            dueTime: task.dueTime || '',
+        })
     }
 
     function hasRealChanges() {
-        if (!editingTask) return false
+        const task = originalTaskRef.current
+        if (!task) return false
 
         const current = getFormSnapshot()
         const original = {
-            title: editingTask.title || '',
-            description: editingTask.notes || '',
-            category: editingTask.category || 'general',
-            priority: editingTask.priority || 'medium',
-            dueDate: editingTask.dueDate || '',
-            dueTime: editingTask.dueTime || '',
+            title: task.title || '',
+            description: task.notes || '',
+            category: task.category || 'general',
+            priority: task.priority || 'medium',
+            dueDate: task.dueDate || '',
+            dueTime: task.dueTime || '',
         }
 
         return JSON.stringify(current) !== JSON.stringify(original)
     }
 
     function resetForm() {
-        if (inputRefs.title.current) inputRefs.title.current.value = ''
-        if (inputRefs.description.current) inputRefs.description.current.value = ''
-        if (inputRefs.category.current) inputRefs.category.current.value = 'general'
-        if (inputRefs.priority.current) inputRefs.priority.current.value = 'medium'
-        if (inputRefs.dueDate.current) inputRefs.dueDate.current.value = ''
-        if (inputRefs.dueTime.current) inputRefs.dueTime.current.value = ''
-        setTitleLength(0)
+        setFormData({
+            title: '',
+            description: '',
+            category: 'general',
+            priority: 'medium',
+            dueDate: '',
+            dueTime: '',
+        })
     }
 
     async function closeEditModal() {
@@ -102,24 +117,20 @@ export default function EditTask({
     function handleSubmitTask() {
         if (!editingTask) return
 
-        const title = inputRefs.title.current?.value.trim()
-        const description = inputRefs.description.current?.value.trim()
-        const category = inputRefs.category.current?.value
-        const priority = inputRefs.priority.current?.value
-        const dueDate = inputRefs.dueDate.current?.value
-        const dueTime = inputRefs.dueTime.current?.value
+        const title = formData.title.trim()
+        const description = formData.description.trim()
 
         const result = updateTask(editingTask.id, {
             title,
             notes: description,
-            category,
-            priority,
-            dueDate,
-            dueTime,
+            category: formData.category,
+            priority: formData.priority,
+            dueDate: formData.dueDate,
+            dueTime: formData.dueTime,
         })
 
         if (!result.success) {
-            console.error(result.error)
+            error(result.error || 'Failed to update task. Please try again.')
             return
         }
 
@@ -127,6 +138,13 @@ export default function EditTask({
         resetForm()
         setEditingTask?.(null)
         setIsOpen(false)
+    }
+
+    function handleInputChange(field, value) {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }))
     }
 
     useEffect(() => {
@@ -139,8 +157,9 @@ export default function EditTask({
         }
 
         const focusTimer = window.setTimeout(() => {
-            inputRefs.title.current?.focus()
-            inputRefs.title.current?.select?.()
+            const titleInput = document.getElementById('editTaskInput')
+            titleInput?.focus()
+            titleInput?.select?.()
         }, 50)
 
         const handleClickOutside = (event) => {
@@ -225,16 +244,16 @@ export default function EditTask({
                             type="text"
                             id="editTaskInput"
                             className="flex-3 min-w-75 w-full"
-                            ref={inputRefs.title}
+                            value={formData.title}
+                            onChange={(e) => handleInputChange('title', e.target.value)}
                             placeholder="What needs doing?"
                             maxLength="120"
                             aria-label="Edit task title"
-                            onChange={(event) => setTitleLength(event.target.value.length)}
                         />
 
                         <div className="flex-1 w-full flex flex-row gap-1.5 justify-between items-center">
                             <span className="font-mono text-sm text-text-muted" id="editCharCount">
-                                {titleLength}/120
+                                {formData.title.length}/120
                             </span>
 
                             <Button onClick={handleSubmitTask} id="editTaskSubmitBtn">
@@ -255,8 +274,8 @@ export default function EditTask({
                                 className="md:w-full"
                                 id="editCategoryDropDown"
                                 aria-label="Select a category"
-                                defaultValue="general"
-                                ref={inputRefs.category}
+                                value={formData.category}
+                                onChange={(e) => handleInputChange('category', e.target.value)}
                             >
                                 {categories.map((category) => (
                                     <option
@@ -278,8 +297,8 @@ export default function EditTask({
                                 className="md:w-full"
                                 id="editPriorityDropdown"
                                 aria-label="Select priority"
-                                defaultValue="medium"
-                                ref={inputRefs.priority}
+                                value={formData.priority}
+                                onChange={(e) => handleInputChange('priority', e.target.value)}
                             >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -292,7 +311,12 @@ export default function EditTask({
                                 Due Date
                             </label>
 
-                            <input type="date" id="editTaskDueDate" ref={inputRefs.dueDate} />
+                            <input
+                                type="date"
+                                id="editTaskDueDate"
+                                value={formData.dueDate}
+                                onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                            />
                         </div>
 
                         <div className="flex flex-col gap-0.5">
@@ -300,7 +324,12 @@ export default function EditTask({
                                 Due time
                             </label>
 
-                            <input type="time" id="editTaskDueTime" ref={inputRefs.dueTime} />
+                            <input
+                                type="time"
+                                id="editTaskDueTime"
+                                value={formData.dueTime}
+                                onChange={(e) => handleInputChange('dueTime', e.target.value)}
+                            />
                         </div>
                     </div>
 
@@ -313,7 +342,8 @@ export default function EditTask({
                             type="text"
                             id="editTaskNotes"
                             className="w-full min-w-75"
-                            ref={inputRefs.description}
+                            value={formData.description}
+                            onChange={(e) => handleInputChange('description', e.target.value)}
                             placeholder="Add some notes..."
                             maxLength="120"
                             aria-label="Task notes"

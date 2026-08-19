@@ -120,9 +120,58 @@ export default function useTasks() {
             };
         }
 
-        const updatedTask = {
+        // Merge existing task with updates first
+        const mergedTask = {
             ...existingTask,
             ...updates,
+        };
+
+        // Validate required fields
+        if (
+            typeof mergedTask.title !== "string" ||
+            !mergedTask.title.trim() ||
+            typeof mergedTask.category !== "string" ||
+            !mergedTask.category.trim() ||
+            typeof mergedTask.priority !== "string" ||
+            !mergedTask.priority.trim()
+        ) {
+            return {
+                success: false,
+                task: null,
+                error: "Title, category and priority are required.",
+            };
+        }
+
+        // Clean inputs
+        const updatedTask = {
+            ...mergedTask,
+
+            title: mergedTask.title.trim(),
+
+            notes:
+                typeof mergedTask.notes === "string"
+                    ? mergedTask.notes.trim()
+                    : "",
+
+            category: mergedTask.category
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, "-"),
+
+            priority: mergedTask.priority
+                .trim()
+                .toLowerCase(),
+
+            dueDate:
+                typeof mergedTask.dueDate === "string"
+                    ? mergedTask.dueDate.trim()
+                    : "",
+
+            dueTime:
+                typeof mergedTask.dueTime === "string"
+                    ? mergedTask.dueTime.trim()
+                    : "",
+
             updatedAt: new Date().toISOString(),
         };
 

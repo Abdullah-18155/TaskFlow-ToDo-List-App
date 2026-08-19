@@ -29,7 +29,7 @@ function App() {
     clearTasks,
   } = useTasks();
 
-  const { filters, setFilters, applyFilters } = useTaskFilters(tasks);
+  const { filters, setFilters, applyFilters } = useTaskFilters();
   const filteredTasks = applyFilters(tasks);
   const { confirm, confirmState, handleConfirm, handleCancel } = useConfirm();
   const { toasts, removeToast, success, error, warning, info } = useToast();
@@ -58,7 +58,7 @@ function App() {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       toggleComplete(taskId);
-      success(task.completed ? 'Task marked as pending' : 'Task completed! ✓');
+      success(task.completed ? 'Task marked as pending' : 'Task completed!');
     }
   };
 
@@ -66,7 +66,7 @@ function App() {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       toggleFavorite(taskId);
-      success(task.favorite ? 'Removed from favorites' : 'Added to favorites ★');
+      success(task.favorite ? 'Removed from favorites' : 'Added to favorites');
     }
   };
 
@@ -74,7 +74,7 @@ function App() {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       togglePinned(taskId);
-      success(task.pinned ? 'Unpinned' : 'Pinned to top 📌');
+      success(task.pinned ? 'Unpinned' : 'Pinned to top');
     }
   };
 
@@ -192,6 +192,7 @@ function App() {
         setIsOpen={setIsOpenAdd}
         addTask={addTask}
         onSuccess={() => success('Task created successfully!')}
+        error={error}
       />
 
       <EditTask
@@ -201,6 +202,7 @@ function App() {
         updateTask={updateTask}
         setEditingTask={setEditingTask}
         onSuccess={() => success('Task updated successfully!')}
+        error={error}
       />
 
       <ConfirmModal

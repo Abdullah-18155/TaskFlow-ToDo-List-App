@@ -34,7 +34,7 @@ export default function TaskCard({ task, toggleComplete, toggleFavorite, toggleP
                     role="checkbox"
                     aria-checked={task.completed}
                     aria-label={`Mark task ${task.completed ? "pending" : "completed"}`}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
                 </button>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -51,7 +51,7 @@ export default function TaskCard({ task, toggleComplete, toggleFavorite, toggleP
                             {categoryLabel}
                         </span>
                         <span className={`badge badge-priority prio-${task.priority.toLowerCase()} capitalize`}>{task.priority}</span>
-                        <span className="text-xs text-text-muted font-mono ml-auto" title="Last edited">{dueLabel}</span>
+                        <span className="text-xs text-text-muted font-mono ml-auto" title="Due date and time">{dueLabel}</span>
                     </div>
                 </div>
 

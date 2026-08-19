@@ -73,8 +73,6 @@ export function getTasks() {
     return get(KEYS.TASKS, []);
 }
 
-console.log(getTasks());
-
 export function setTasks(tasks) {
     return set(KEYS.TASKS, tasks);
 }
