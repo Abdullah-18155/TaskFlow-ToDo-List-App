@@ -195,3 +195,9 @@ Open the **Keyboard Shortcuts** section inside the application to view the avail
 Frontend Developer focused on building modern and responsive web applications using React, Next.js, JavaScript, Tailwind CSS, and modern frontend technologies.
 
 If you like this project, consider giving the repository a ⭐.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
